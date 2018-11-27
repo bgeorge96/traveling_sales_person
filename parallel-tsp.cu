@@ -20,6 +20,7 @@
 typedef void (*perm_action_t)(int *v, int n);
 
 /* Reference an element in the TSP distance array. */
+
 #define TSP_ELT(tsp, n, i, j) *(tsp + (i * n) + j)
 
 /* Swap array elements. */
