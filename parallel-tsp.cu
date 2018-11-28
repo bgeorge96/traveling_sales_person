@@ -54,11 +54,11 @@ perms(int *v, int n, int i, perm_action_t action)
 }
 
 /* Generate permutations of the elements i to (n - 1). */
-void
-permutations(int *v, int n, perm_action_t action)
-{
-  perms(v, n, 0, action);
-}
+// void
+// permutations(int *v, int n, perm_action_t action)
+// {
+//   perms(v, n, 0, action);
+// }
 
 /* Trivial action to pass to permutations--print out each one. */
 void
@@ -81,6 +81,7 @@ int num_cities = 5;
 int shortest_length = INT_MAX;
 int num_as_short = -1;
 int num_trials = 0;
+int num_threads = 1;
 int random_seed = 42;
 
 /* Create an instance of a symmetric TSP. */
@@ -171,7 +172,7 @@ typedef struct {
 } list_t;
 
 /* Dump list, including sizes */
-void
+__device__ void
 list_dump(list_t *list)
 {
   printf("%2d/%2d", list->cur_size, list->max_size);
@@ -182,7 +183,7 @@ list_dump(list_t *list)
 }
 
 /* Allocate list that can store up to 'max_size' elements */
-list_t *
+__device__ list_t *
 list_alloc(int max_size)
 {
   list_t *list = (list_t *)malloc(sizeof(list_t));
@@ -193,7 +194,7 @@ list_alloc(int max_size)
 }
 
 /* Free a list; call this to avoid leaking memory! */
-void
+__device__ void
 list_free(list_t *list)
 {
   free(list->values);
@@ -201,37 +202,37 @@ list_free(list_t *list)
 }
 
 /* Add a value to the end of the list */
-void
+__device__ void
 list_add(list_t *list, int value)
 {
   if (list->cur_size >= list->max_size) {
 	printf("List full");
 	list_dump(list);
-	exit(1);
+	// exit(1);
   }
   list->values[list->cur_size++] = value;
 }
 
 /* Return the current size of the list */
-int
+__device__ int
 list_size(list_t *list)
 {
   return list->cur_size;
 }
 
 /* Validate index */
-void
+__device__ void
 _list_check_index(list_t *list, int index)
 {
   if (index < 0 || index > list->cur_size - 1) {
 	printf("Invalid index %d\n", index);
 	list_dump(list);
-	exit(1);
+	// exit(1);
   }
 }
 
 /* Get the value at given index */
-int
+__device__ int
 list_get(list_t *list, int index)
 {
   _list_check_index(list, index);
@@ -239,7 +240,7 @@ list_get(list_t *list, int index)
 }
 
 /* Remove the value at the given index */
-void
+__device__ void
 list_remove_at(list_t *list, int index)
 {
   _list_check_index(list, index);
@@ -253,7 +254,7 @@ list_remove_at(list_t *list, int index)
    array is allocated dynamically; the caller must free the space when no
    longer needed.
  */
-int *
+__device__ int *
 list_as_array(list_t *list)
 {
   int *rtn = (int *)malloc(list->max_size * sizeof(int));
@@ -272,7 +273,7 @@ list_as_array(list_t *list)
 */
 
 /* Calculate n! iteratively */
-long
+__device__ long
 factorial(int n)
 {
   if (n < 1) {
@@ -290,7 +291,7 @@ factorial(int n)
    in the range [0 .. size - 1]. The integers are allocated dynamically and
    should be free'd by the caller when no longer needed.
 */
-int *
+__device__ int *
 kth_perm(int k, int size)
 {
   long remain = k - 1;
@@ -344,14 +345,14 @@ kth_perm(int k, int size)
 }
 
 /* Print a permutation array */
-void
-print_perm(int *perm, int size)
-{
-  for (int k = 0; k < size; k++) {
-	printf("%4d", perm[k]);
-  }
-  printf("\n");
-}
+// void
+// print_perm(int *perm, int size)
+// {
+//   for (int k = 0; k < size; k++) {
+// 	printf("%4d", perm[k]);
+//   }
+//   printf("\n");
+// }
 
 /* Given an array of size elements at perm, update the array in place to
    contain the lexographically next permutation. It is originally due to
@@ -383,10 +384,15 @@ next_perm(int *perm, int size)
 }
 
 __global__
-void tsp_par(int size){
-  int min_tsp = INT_MAX;
+void tsp_go(int* perm,int num_cities, int num_threads){
 
+  // int perm[num_cities];
+  perm = kth_perm((factorial(num_cities)/num_threads)*threadIdx.x, num_cities);
 
+  char snum[5];
+  snprintf(snum, 5, "%d",threadIdx.x);
+
+  print_perm(perm, 1, snum);
 }
 
 void
@@ -406,7 +412,7 @@ main(int argc, char **argv)
   random_seed = time(NULL);
 
   int ch;
-  while ((ch = getopt(argc, argv, "c:hs:")) != -1) {
+  while ((ch = getopt(argc, argv, "c:hs:n::")) != -1) {
 	switch (ch) {
 	case 'c':
 	  num_cities = atoi(optarg);
@@ -414,24 +420,38 @@ main(int argc, char **argv)
 	case 's':
 	  random_seed = atoi(optarg);
 	  break;
+  case 'n':
+
+	  break;
 	case 'h':
 	default:
 	  usage(argv[0]);
 	}
   }
 
-  int* d_cperm = create_tsp(num_cities);
+  // cost array
+  int* h_cperm = create_tsp(num_cities);
+  int* d_cperm;
+
+  // output Array
+  int h_output[num_threads];
+  int* d_output;
 
   // malloc, make space
-  int *d_perm;
-  cudaMalloc((void **)&d_perm, sizeof(int)*num_cities);
-  // cudaMalloc((void **)&d_cperm, sizeof(int)*num_cities);
-
+  // int *d_perm;
+  // cudaMalloc((void **)&d_perm, sizeof(int)*num_cities);
+  cudaMalloc((void **)&d_cperm, sizeof(int)*num_cities);
+  cudaMalloc((void **)&d_output, sizeof(int)*num_threads);
   // copy if nessary
+  cudaMemcpy(d_cperm, h_cperm, num_cities * sizeof(int), cudaMemcpyHostToDevice);
+
 
 
   /* "Travel, salesman!" */
-  // permutations(order, num_cities, eval_tsp);
+  tsp_go<<<1,num_threads>>>(d_cperm,num_cities, num_threads);
+
+  // collect results
+  cudaMemcpy(h_output, d_output, num_threads * sizeof(int), cudaMemcpyDeviceToHost);
 
   /* Report. */
   printf("\n");
@@ -440,4 +460,8 @@ main(int argc, char **argv)
   printf("Shortest %d - %d tours - %.6f%%\n",
 		 shortest_length, num_as_short, percent_as_short);
   printf("\n");
+
+  free(h_cperm);
+  cudaFree(d_cperm);
+  cudaFree(d_output);
 }
