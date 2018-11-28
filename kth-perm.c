@@ -150,9 +150,9 @@ kth_perm(int k, int size)
 #endif
 
   for (int i = 1;  i < size;  i++) {
-	long f = factorial(size - i);
-	long j = remain / f;
-	remain = remain % f;
+    long f = factorial(size - i);
+    long j = remain / f;
+    remain = remain % f;
 #if DEBUG
 	printf("i=%d, f=%ld j=%ld, remain=%ld\n", i, f, j, remain);
 #endif
@@ -166,10 +166,9 @@ kth_perm(int k, int size)
 	printf("  nums");
 	list_dump(numbers);
 #endif
-
-	if (remain == 0) {
-	  break;
-	}
+    if (remain == 0) {
+	     break;
+	  }
   }
 
   /* Append remaining digits */
