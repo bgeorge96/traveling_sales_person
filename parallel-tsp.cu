@@ -61,7 +61,7 @@ perms(int *v, int n, int i, perm_action_t action)
 // }
 
 /* Trivial action to pass to permutations--print out each one. */
-void
+__device__ void
 print_perm(int *perm, int n, char *msge)
 {
   for (int j = 0;  j < n;  j++) {
@@ -102,10 +102,10 @@ create_tsp(int n)
 }
 
 /* Print a TSP distance matrix. */
-void
+__device__ void
 print_tsp(int *tsp, int n)
 {
-  printf("TSP (%d cities - seed %d)\n    ", n, random_seed);
+  // printf("TSP (%d cities - seed %d)\n    ", n, random_seed);
   for (int j = 0;  j < n;  j++) {
 	printf("%3d|", j);
   }
@@ -121,15 +121,10 @@ print_tsp(int *tsp, int n)
 }
 
 /* Evaluate a single instance of the TSP. */
-void
-eval_tsp(int *perm, int n)
+__device__ void
+eval_tsp(int *perm, int n, int num_cities, int* distances)
 {
-  /* Initialize the distances array once per program run. */
-  static int *distances = NULL;
-  if (NULL == distances) {
-	distances = create_tsp(num_cities);
 	print_tsp(distances, num_cities);
-  }
 
   /* Calculate the length of the tour for the current permutation. */
   int total = 0;
@@ -138,29 +133,9 @@ eval_tsp(int *perm, int n)
 	int from = perm[i];
 	int to = perm[j];
 	int val = TSP_ELT(distances, n, from, to);
-	debug_printf("tsp[%d, %d] = %d\n", from, to, val);
+	// debug_printf("tsp[%d, %d] = %d\n", from, to, val);
 	total += val;
   }
-
-#if DEBUG
-  print_perm(perm, n, "PERM");
-#endif
-
-  /* Gather statistics. */
-  if (total <= shortest_length) {
-	char buf[80];
-	sprintf(buf, "len %4d - trial %12d", total, num_trials);
-	print_perm(perm, n, buf);
-
-	if (total == shortest_length) {
-	  num_as_short++;
-	} else {
-	  num_as_short = 1;
-	}
-	shortest_length = total;
-  }
-  num_trials++;
-  debug_printf("Total %d\n", total);
 }
 
 /**** List ADT ****************/
@@ -344,16 +319,6 @@ kth_perm(int k, int size)
   return rtn;
 }
 
-/* Print a permutation array */
-// void
-// print_perm(int *perm, int size)
-// {
-//   for (int k = 0; k < size; k++) {
-// 	printf("%4d", perm[k]);
-//   }
-//   printf("\n");
-// }
-
 /* Given an array of size elements at perm, update the array in place to
    contain the lexographically next permutation. It is originally due to
    Dijkstra. The present version is discussed at:
@@ -387,12 +352,14 @@ __global__
 void tsp_go(int* perm,int num_cities, int num_threads){
 
   // int perm[num_cities];
-  perm = kth_perm((factorial(num_cities)/num_threads)*threadIdx.x, num_cities);
+  // perm = kth_perm((factorial(num_cities)/num_threads)*threadIdx.x, num_cities);
 
-  char snum[5];
-  snprintf(snum, 5, "%d",threadIdx.x);
+  // char buf[5] = "ha";
+  // sprintf(buf, "%d", threadIdx.x);
 
-  print_perm(perm, 1, snum);
+  // print_perm(perm, 1, buf);
+  printf("%d, %d, %d\n",threadIdx.x, blockIdx.x, blockDim.x);
+  __syncthreads();
 }
 
 void
