@@ -1,0 +1,41 @@
+# Makefile for convolution.
+
+CC=gcc
+MPI=mpicc
+TAR=tar
+CFLAGS=-Wall
+
+.PHONY: all clean
+
+large:
+	mpiexec -n 2 ./threaded -a a_large -b b_large -c c_large
+
+pdf:
+	pdflatex mydoc.tex
+	rm mydoc.aux mydoc.log
+
+all: mat-mult mat-mult-threaded maker
+
+homework.tar.gz: Makefile sequential-mult.c make-matrix.c mat-mult-threaded.c mydoc.pdf
+	$(TAR) zcvf $@ $^
+
+maker: make-matrix.c
+	$(CC) $(FLAGS) -o $@ $^
+
+mat-mult: mat-mult.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+seq: sequential-mult.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+
+threaded: mat-mult-threaded.c
+	$(MPI) $(CFLAGS) -o $@ $^
+
+test: mat-mult seq
+	./mat-mult
+	./seq -a TEST_a_matrix -b TEST_b_matrix -c TEST_c_matrix
+
+clean:
+	$(RM) *.o
+	$(RM) mat-mult threaded seq maker

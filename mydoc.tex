@@ -1,0 +1,96 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\title{Matrix Multiplication Project}
+\author{Brandon George \thanks{Dr. Nurk for the great starter code and moving the due date!}}
+\date{October 2018}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\begin{abstract}
+Welcome to the Matrix Multiplication Project!
+\end{abstract}
+
+\section{Solve}
+\subsection{Partitioning}
+\begin{itemize}
+  \item For this problem, I chose to do the stripes because to me that seemed more simplistic and I was better able to think about the pointer math because of some of the starter code that you gave to us. It turns out that this was a really fast way to get the problem started.
+\end{itemize}
+
+\subsection{Generator}
+\begin{itemize}
+  \item The file that my generator is in is the $make$-$matrix.c$. The way that I chose to write my files is the first line is two ints, the first is the rows and the second is the columns. The file after that is the actual integers in that row,col for the matrix.
+\end{itemize}
+
+\subsection{Sequential Algoritm}
+\begin{itemize}
+  \item To verify my program, I rewrote your program to be more flexible to the differing sizes of data that are passed into the parallel algoritm. I am going to make a call in my makefile to run a experiment and test the differences in the c matrix output files.
+\end{itemize}
+
+\section{Implementation}
+\begin{itemize}
+  \item For all of the guidlines that you specified, I believe that I have completed all but the following.
+  \begin{enumerate}
+    \item correctness of the matrix multiply
+  \end{enumerate}
+  \item I believe that some of the issues that I encountered with this are due to the fact that communication in MPI was not being compliant or consistent. There were times when the values that were passed would be corrent and others when the values would not.
+\end{itemize}
+
+
+
+\section{Report}
+
+\subsection{Kind Of}
+\begin{itemize}
+  \item The matrix multiply wasn't hard to get and understand and split up. I am not able to complete this part of the assignment because the MPI communication isn't working in the way that it is expected to.
+\end{itemize}
+% \subsection{Table}
+% \begin{center}
+%   \begin{tabular}{|c | c c c c ||}
+%     \hline
+%     Operand Sizes & $p$ & $t_p$(s) & $s$ & $e$ \\
+%     \hline\hline
+%     $dog.png$ & 1 & 10.231 & 1 & 1 \\
+%      & 2 & 6.064 & 1.687 & .844 \\
+%      & 3 & 4.303 & 2.378 & .793 \\
+%      & 4 & 3.832 & 2.669 & .667 \\
+%      & 5 & 3.302 & 3.098 & .619 \\
+%      & 6 & 3.108 & 3.292 & .549 \\
+%      & 7 & 2.852 & 3.587 & .512 \\
+%      & 8 & 3.385 & 3.022 & .378 \\
+%      \hline\hline
+%     \hline
+%   \end{tabular}
+% \end{center}
+%
+% \subsection{Graph}
+% \subsubsection{$dogs.png$}
+% \begin{tikzpicture}
+%   \begin{axis}[title={$t_p$ versus $p$},xlabel={$p$},ylabel={$t_p$},xmin=1, xmax=8,legend pos=north west, ymajorgrids=true,grid style=dashed]
+%   \addplot[color=blue,mark=square]coordinates{(1,10.231)(2,6.064)(3,4.303)(4,3.832)(5,3.302)(6,3.108)(7,2.852)(8,3.385)};
+%   \end{axis}
+% \end{tikzpicture}
+\section{Performance}
+\begin{enumerate}
+  \item How did the performance vary with number of processors and matrix size?
+  \begin{itemize}
+    \item The more processors the lower the efficency, because of the communication overhead! Because of the way that MPI only passes stuff that it needs, there was a noticable increase when the matrix size was large.
+  \end{itemize}
+  \item What surprised you about the results you obtained? Why?
+  \begin{itemize}
+    \item How much faster the threaded implementation of this algoritm was because I know that there is communication overhead.
+  \end{itemize}
+  \item What was the most complex/difficult part of the assignment? Why?
+  \begin{itemize}
+    \item working with MPI and the inconsistencies that were there after running with the same results multiple times.
+  \end{itemize}
+\end{enumerate}
+
+
+\end{document}
