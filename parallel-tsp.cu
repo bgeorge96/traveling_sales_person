@@ -23,7 +23,7 @@ typedef void (*perm_action_t)(int *v, int n);
 #define TSP_ELT(tsp, n, i, j) *(tsp + (i * n) + j)
 
 /* Swap array elements. */
-void
+__device__ __host__ void
 swap(int *v, int i, int j)
 {
   int t = v[i];
@@ -31,54 +31,37 @@ swap(int *v, int i, int j)
   v[j] = t;
 }
 
-/* Helper function to compute permutations recursively. */
-void
-perms(int *v, int n, int i, perm_action_t action)
-{
-  int j;
-
-  if (i == n) {
-	/* At the end of the array, we have a permutation we can use. */
-	action(v, n);
-
-  } else {
-	/* Recursively explore the permutations from index i to (n - 1). */
-	for (j = i;  j < n;  j++) {
-	  /* Array with i and j switched */
-	  swap(v, i, j);
-	  perms(v, n, i + 1, action);
-	  /* Swap back to the way they were */
-	  swap(v, i, j);
-	}
-  }
-}
-
-/* Generate permutations of the elements i to (n - 1). */
-// void
-// permutations(int *v, int n, perm_action_t action)
-// {
-//   perms(v, n, 0, action);
-// }
-
 /* Trivial action to pass to permutations--print out each one. */
 __device__ void
 print_perm(int *perm, int n, char *msge)
 {
   for (int j = 0;  j < n;  j++) {
-	printf("%2d ", perm[j]);
+	   printf("%2d ", perm[j]);
   }
   printf(" - %s\n", msge);
 }
 
-/* No-op action */
-__device__ void
-nop(int *v, int n)
+__host__ void
+smallest_in_list(int *list, int *num_short, int n, int *shortest_length, int *num_as_short)
 {
-  return;
+  int min_path = INT_MAX;
+  int num = 0;
+  for (int j = 0;  j < n;  j++) {
+    int tmp = list[j];
+    if(tmp < min_path){
+      min_path = tmp;
+      num = 0;
+    }
+    if(tmp == min_path){
+      num += num_short[j];
+    }
+  }
+  *shortest_length = min_path;
+  *num_as_short = num;
 }
 
 /* Create an instance of a symmetric TSP. */
-int *
+__host__ int *
 create_tsp(int n, int random_seed)
 {
   int *tsp = (int *) malloc(n * n * sizeof(int));
@@ -95,7 +78,7 @@ create_tsp(int n, int random_seed)
 }
 
 /* Print a TSP distance matrix. */
-__device__ void
+__host__ __device__ void
 print_tsp(int *tsp, int n)
 {
   // printf("TSP (%d cities - seed %d)\n    ", n, random_seed);
@@ -114,21 +97,19 @@ print_tsp(int *tsp, int n)
 }
 
 /* Evaluate a single instance of the TSP. */
-__device__ void
-eval_tsp(int *perm, int n, int num_cities, int* distances)
+__device__ int
+eval_tsp(int *perm, int n, int* distances)
 {
-	print_tsp(distances, num_cities);
-
   /* Calculate the length of the tour for the current permutation. */
   int total = 0;
   for (int i = 0;  i < n;  i++) {
-	int j = (i + 1) % n;
-	int from = perm[i];
-	int to = perm[j];
-	int val = TSP_ELT(distances, n, from, to);
-	// debug_printf("tsp[%d, %d] = %d\n", from, to, val);
-	total += val;
+  	int j = (i + 1) % n;
+  	int from = perm[i];
+  	int to = perm[j];
+  	int val = TSP_ELT(distances, n, from, to);
+  	total += val;
   }
+  return total;
 }
 
 /**** List ADT ****************/
@@ -241,7 +222,7 @@ list_as_array(list_t *list)
 */
 
 /* Calculate n! iteratively */
-__device__ long
+__device__ __host__ long
 factorial(int n)
 {
   if (n < 1) {
@@ -301,7 +282,7 @@ kth_perm(int k, int size)
    Dijkstra. The present version is discussed at:
    http://www.cut-the-knot.org/do_you_know/AllPerm.shtml
  */
-void
+__device__ void
 next_perm(int *perm, int size)
 {
   int i = size - 1;
@@ -326,26 +307,40 @@ next_perm(int *perm, int size)
 }
 
 __global__
-void tsp_go(int* perm, int num_cities, int num_threads){
-
-  // int perm[num_cities];
-  long cur_idx = threadIdx.x + 1;
-  long end_idx = (factorial(num_cities)/num_threads) * (cur_idx);
+void tsp_go(int* perm, int num_cities, int num_threads, int* cperm, int* output, int* num_as_short){
+  long one_index = threadIdx.x + 1;
+  long cur_idx = (factorial(num_cities)/num_threads) * (threadIdx.x)+1;
+  long end_idx = (factorial(num_cities)/num_threads) * (one_index);
   perm = kth_perm(cur_idx, num_cities);
+  int min_path = INT_MAX;
+  int num = 0;
 
-  // __syncthreads();
-  char thing[5] = "yes";
-  print_perm(perm, num_cities, thing);
+  // print_tsp(cperm, num_cities);
 
   __syncthreads();
-  // while( cur_idx <= end_idx){
-    printf("Hello from %d, end_idx: %ld, cur_idx: %ld\n",
-    threadIdx.x,
-    end_idx,
-    cur_idx);
+  while( cur_idx <= end_idx){
+    // printf("Hello from %d, end_idx: %ld, cur_idx: %ld, perms: %ld\n", threadIdx.x, end_idx, cur_idx, factorial(num_cities));
+    int tmp = eval_tsp(perm, num_cities, cperm);
+    // printf("Hello from %d, cost: %d\n", threadIdx.x, tmp);
+    if(tmp < min_path){
+      min_path = tmp;
+      num = 0;
+    }
 
-    // cur_idx++;
-  // }
+    if(tmp == min_path){
+      num++;
+    }
+
+    cur_idx++;
+    // MAKING SURE NOT OUT OF RANGE
+    if( cur_idx <= end_idx){
+      next_perm(perm, num_cities);
+    }
+    // __syncthreads();
+  }
+  __syncthreads();
+  output[threadIdx.x] = min_path;
+  num_as_short[threadIdx.x] = num;
 }
 
 void
@@ -362,9 +357,9 @@ int
 main(int argc, char **argv)
 {
   int num_cities = 5;
-  int shortest_length = INT_MAX;
+  int shortest_length;
   int num_as_short = -1;
-  int num_trials = 0;
+  long num_trials = 0;
   int num_threads = 1;
   int random_seed = 42;
 
@@ -394,6 +389,7 @@ main(int argc, char **argv)
 
   // cost array
   int* h_cperm = create_tsp(num_cities, random_seed);
+  print_tsp(h_cperm, num_cities);
   int* d_cperm;
 
   // output Array
@@ -403,27 +399,38 @@ main(int argc, char **argv)
   // perm array
   int *d_perm;
 
+  // num_as_short array
+  int h_num_short[num_threads];
+  int *d_num_short;
+
   cudaMalloc((void **)&d_perm, sizeof(int)*num_cities);
-  cudaMalloc((void **)&d_cperm, sizeof(int)*num_cities);
+  cudaMalloc((void **)&d_cperm, sizeof(int)*num_cities*num_cities);
   cudaMalloc((void **)&d_output, sizeof(int)*num_threads);
-  cudaMemcpy(d_cperm, h_cperm, num_cities * sizeof(int), cudaMemcpyHostToDevice);
+  cudaMalloc((void **)&d_num_short, sizeof(int)*num_threads);
+  cudaMemcpy(d_cperm, h_cperm, sizeof(int)*num_cities*num_cities, cudaMemcpyHostToDevice);
 
   /* "Travel, salesman!" */
-  tsp_go<<<1, num_threads>>>(d_perm,num_cities, num_threads);
+  tsp_go<<<1, num_threads>>>(d_perm, num_cities, num_threads, d_cperm, d_output, d_num_short);
   cudaDeviceSynchronize();
 
   // collect results
   cudaMemcpy(h_output, d_output, num_threads * sizeof(int), cudaMemcpyDeviceToHost);
+  cudaMemcpy(h_num_short, d_num_short, num_threads * sizeof(int), cudaMemcpyDeviceToHost);
+
+  smallest_in_list(h_output, h_num_short, num_threads, &shortest_length, &num_as_short);
 
   /* Report. */
   printf("\n");
-  printf("Trials %d\n", num_trials);
+  num_trials = factorial(num_cities);
+  printf("Trials %ld\n", num_trials);
   float percent_as_short = (float)num_as_short / (float)num_trials * 100.0;
   printf("Shortest %d - %d tours - %.6f%%\n",
 		 shortest_length, num_as_short, percent_as_short);
   printf("\n");
 
   free(h_cperm);
+  // free(h_output);
+  cudaFree(d_perm);
   cudaFree(d_cperm);
   cudaFree(d_output);
 }
