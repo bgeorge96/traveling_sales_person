@@ -3,9 +3,9 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 
-\title{Matrix Multiplication Project}
+\title{Traveling Sales Person}
 \author{Brandon George \thanks{Dr. Nurk for the great starter code and moving the due date!}}
-\date{October 2018}
+\date{November 2018}
 
 \begin{document}
 
@@ -14,83 +14,161 @@
 \end{titlepage}
 
 \begin{abstract}
-Welcome to the Matrix Multiplication Project!
+Welcome to the Traveling Sales Person Problem! This was my fist attempt at making a GPU program and I think that it has been very beneficial to understanding what GPU programming might look like.
 \end{abstract}
-
-\section{Solve}
-\subsection{Partitioning}
-\begin{itemize}
-  \item For this problem, I chose to do the stripes because to me that seemed more simplistic and I was better able to think about the pointer math because of some of the starter code that you gave to us. It turns out that this was a really fast way to get the problem started.
-\end{itemize}
-
-\subsection{Generator}
-\begin{itemize}
-  \item The file that my generator is in is the $make$-$matrix.c$. The way that I chose to write my files is the first line is two ints, the first is the rows and the second is the columns. The file after that is the actual integers in that row,col for the matrix.
-\end{itemize}
-
-\subsection{Sequential Algoritm}
-\begin{itemize}
-  \item To verify my program, I rewrote your program to be more flexible to the differing sizes of data that are passed into the parallel algoritm. I am going to make a call in my makefile to run a experiment and test the differences in the c matrix output files.
-\end{itemize}
-
-\section{Implementation}
-\begin{itemize}
-  \item For all of the guidlines that you specified, I believe that I have completed all but the following.
-  \begin{enumerate}
-    \item correctness of the matrix multiply
-  \end{enumerate}
-  \item I believe that some of the issues that I encountered with this are due to the fact that communication in MPI was not being compliant or consistent. There were times when the values that were passed would be corrent and others when the values would not.
-\end{itemize}
-
-
 
 \section{Report}
 
-\subsection{Kind Of}
-\begin{itemize}
-  \item The matrix multiply wasn't hard to get and understand and split up. I am not able to complete this part of the assignment because the MPI communication isn't working in the way that it is expected to.
-\end{itemize}
-% \subsection{Table}
-% \begin{center}
-%   \begin{tabular}{|c | c c c c ||}
-%     \hline
-%     Operand Sizes & $p$ & $t_p$(s) & $s$ & $e$ \\
-%     \hline\hline
-%     $dog.png$ & 1 & 10.231 & 1 & 1 \\
-%      & 2 & 6.064 & 1.687 & .844 \\
-%      & 3 & 4.303 & 2.378 & .793 \\
-%      & 4 & 3.832 & 2.669 & .667 \\
-%      & 5 & 3.302 & 3.098 & .619 \\
-%      & 6 & 3.108 & 3.292 & .549 \\
-%      & 7 & 2.852 & 3.587 & .512 \\
-%      & 8 & 3.385 & 3.022 & .378 \\
-%      \hline\hline
-%     \hline
-%   \end{tabular}
-% \end{center}
-%
-% \subsection{Graph}
-% \subsubsection{$dogs.png$}
-% \begin{tikzpicture}
-%   \begin{axis}[title={$t_p$ versus $p$},xlabel={$p$},ylabel={$t_p$},xmin=1, xmax=8,legend pos=north west, ymajorgrids=true,grid style=dashed]
-%   \addplot[color=blue,mark=square]coordinates{(1,10.231)(2,6.064)(3,4.303)(4,3.832)(5,3.302)(6,3.108)(7,2.852)(8,3.385)};
-%   \end{axis}
-% \end{tikzpicture}
-\section{Performance}
-\begin{enumerate}
-  \item How did the performance vary with number of processors and matrix size?
-  \begin{itemize}
-    \item The more processors the lower the efficency, because of the communication overhead! Because of the way that MPI only passes stuff that it needs, there was a noticable increase when the matrix size was large.
-  \end{itemize}
-  \item What surprised you about the results you obtained? Why?
-  \begin{itemize}
-    \item How much faster the threaded implementation of this algoritm was because I know that there is communication overhead.
-  \end{itemize}
-  \item What was the most complex/difficult part of the assignment? Why?
-  \begin{itemize}
-    \item working with MPI and the inconsistencies that were there after running with the same results multiple times.
-  \end{itemize}
-\end{enumerate}
+\subsection{Table}
+\subsubsection{Three Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      3 & 1 & 0.063 &  &  \\
+      3 & 2 & 0.050 &  &  \\
+      3 & 4 & 0.050 &  &  \\
+      3 & 6 & 0.050 &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Four Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      4 & 1 & 0.061 &  &  \\
+      4 & 2 & 0.050 &  &  \\
+      4 & 4 & 0.050 &  &  \\
+      4 & 8 & 0.049 &  &  \\
+      4 & 16 & 0.050 &  &  \\
+      4 & 24 & 0.052 &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Five Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      5 & 1 & 0.050 &  &  \\
+      5 & 2 & 0.051 &  &  \\
+      5 & 4 & 0.050 &  &  \\
+      5 & 8 & 0.065 &  &  \\
+      5 & 16 & 0.063 &  &  \\
+      5 & 32 & 0.050 &  &  \\
+      5 & 64 & 0.050 &  &  \\
+      5 & 120 & 0.050 &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Six Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      6 & 1 &  0.053&  &  \\
+      6 & 2 &  0.051&  &  \\
+      6 & 4 &  0.052&  &  \\
+      6 & 8 &  0.051&  &  \\
+      6 & 16 & 0.052 &  &  \\
+      6 & 32 & 0.051 &  &  \\
+      6 & 64 & 0.051 &  &  \\
+      6 & 128 &0.051  &  &  \\
+      6 & 256 &0.051  &  &  \\
+      6 & 512 &0.052  &  &  \\
+      6 & 720 &0.053  &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Seven Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      7 & 4 &  0.056&  &  \\
+      7 & 8 &  0.053&  &  \\
+      7 & 16 & 0.052 &  &  \\
+      7 & 32 & 0.052 &  &  \\
+      7 & 64 & 0.055 &  &  \\
+      7 & 128 &0.055  &  &  \\
+      7 & 256 &0.052  &  &  \\
+      7 & 512 &0.052  &  &  \\
+      7 & 1024 & 0.067 &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Eight Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      8 & 8 &  0.071&  &  \\
+      8 & 16 & 0.061 &  &  \\
+      8 & 32 & 0.057 &  &  \\
+      8 & 64 & 0.053 &  &  \\
+      8 & 128 &0.053  &  &  \\
+      8 & 256 &0.052  &  &  \\
+      8 & 512 &0.052  &  &  \\
+      8 & 1024 & 0.053 &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Nine Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      9 & 8 &  0.259&  &  \\
+      9 & 16 & 0.156 &  &  \\
+      9 & 32 & 0.109 &  &  \\
+      9 & 64 & 0.081 &  &  \\
+      9 & 128 &0.069  &  &  \\
+      9 & 256 &0.062  &  &  \\
+      9 & 512 &0.059  &  &  \\
+      9 & 1024 & 0.063 &  &  \\
+      \hline\hline
+      \hline
+  \end{tabular}
+\end{center}
+\subsubsection{Ten Cities}
+\begin{center}
+  \begin{tabular}{|c | c c c c ||}
+    \hline
+    Number of Cities & $p$ & $t_p$(s) & $s$ & $e$ \\
+    \hline\hline
+      10 & 8 &  2.336&  &  \\
+      10 & 16 & 1.240 &  &  \\
+      10 & 32 & 0.700 &  &  \\
+      10 & 64 & 0.386 &  &  \\
+      10 & 128 &0.225  &  &  \\
+      10 & 256 &0.156  &  &  \\
+      10 & 512 &0.136  &  &  \\
+      10 & 1024 & 0.137 &  &  \\
+      \hline\hline
+    \hline
+  \end{tabular}
+\end{center}
 
+\subsection{Graph}
+\subsubsection{$dogs.png$}
+\begin{tikzpicture}
+  \begin{axis}[title={$t_p$ versus $p$},xlabel={$p$},ylabel={$t_p$},xmin=1, xmax=8,legend pos=north west, ymajorgrids=true,grid style=dashed]
+  \addplot[color=blue,mark=square]coordinates{(1,10.231)(2,6.064)(3,4.303)(4,3.832)(5,3.302)(6,3.108)(7,2.852)(8,3.385)};
+  \end{axis}
+\end{tikzpicture}
 
 \end{document}

@@ -28,8 +28,6 @@
 
 16 Threads took 0.063 to compute 5 cities with random_seed: 56.   shortest_length= 197
 
-32 Threads took 0.051 to compute 5 cities with random_seed: 56.   shortest_length= 197
-
 32 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
 
 64 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
@@ -47,8 +45,6 @@
 16 Threads took 0.052 to compute 6 cities with random_seed: 56.   shortest_length= 201
 
 32 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
-
-32 Threads took 0.050 to compute 6 cities with random_seed: 56.   shortest_length= 201
 
 64 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
 
@@ -68,8 +64,6 @@
 
 32 Threads took 0.052 to compute 7 cities with random_seed: 56.   shortest_length= 207
 
-32 Threads took 0.051 to compute 7 cities with random_seed: 56.   shortest_length= 207
-
 64 Threads took 0.055 to compute 7 cities with random_seed: 56.   shortest_length= 207
 
 128 Threads took 0.055 to compute 7 cities with random_seed: 56.   shortest_length= 207
@@ -83,8 +77,6 @@
 8 Threads took 0.071 to compute 8 cities with random_seed: 56.   shortest_length= 210
 
 16 Threads took 0.061 to compute 8 cities with random_seed: 56.   shortest_length= 210
-
-32 Threads took 0.056 to compute 8 cities with random_seed: 56.   shortest_length= 210
 
 32 Threads took 0.057 to compute 8 cities with random_seed: 56.   shortest_length= 210
 
@@ -104,8 +96,6 @@
 
 32 Threads took 0.109 to compute 9 cities with random_seed: 56.   shortest_length= 240
 
-32 Threads took 0.109 to compute 9 cities with random_seed: 56.   shortest_length= 240
-
 64 Threads took 0.081 to compute 9 cities with random_seed: 56.   shortest_length= 240
 
 128 Threads took 0.069 to compute 9 cities with random_seed: 56.   shortest_length= 240
@@ -122,8 +112,6 @@
 
 32 Threads took 0.700 to compute 10 cities with random_seed: 56.   shortest_length= 253
 
-32 Threads took 0.699 to compute 10 cities with random_seed: 56.   shortest_length= 253
-
 64 Threads took 0.386 to compute 10 cities with random_seed: 56.   shortest_length= 253
 
 128 Threads took 0.225 to compute 10 cities with random_seed: 56.   shortest_length= 253
@@ -133,4 +121,3 @@
 512 Threads took 0.136 to compute 10 cities with random_seed: 56.   shortest_length= 253
 
 1024 Threads took 0.137 to compute 10 cities with random_seed: 56.   shortest_length= 253
-
