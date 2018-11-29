@@ -13,7 +13,7 @@
  */
 
 /* Requires C99 compiler (gcc: -std=c99) */
-#define DEBUG 0
+#define ONE_BILLION (double)1000000000.0
 #define debug_printf(fmt, ...) do { if (DEBUG) fprintf(stderr, fmt, __VA_ARGS__); } while (0)
 
 /* Action function for each permuation. */
@@ -21,6 +21,14 @@ typedef void (*perm_action_t)(int *v, int n);
 
 /* Reference an element in the TSP distance array. */
 #define TSP_ELT(tsp, n, i, j) *(tsp + (i * n) + j)
+
+__host__ double
+now(void)
+{
+  struct timespec current_time;
+  clock_gettime(CLOCK_REALTIME, &current_time);
+  return current_time.tv_sec + (current_time.tv_nsec / ONE_BILLION);
+}
 
 /* Swap array elements. */
 __device__ __host__ void
@@ -391,6 +399,8 @@ main(int argc, char **argv)
     num_threads = num_trials;
   }
 
+  double start_time = now();
+
   // cost array
   int* h_cperm = create_tsp(num_cities, random_seed);
   // print_tsp(h_cperm, num_cities);
@@ -422,6 +432,12 @@ main(int argc, char **argv)
   cudaMemcpy(h_num_short, d_num_short, num_threads * sizeof(int), cudaMemcpyDeviceToHost);
 
   smallest_in_list(h_output, h_num_short, num_threads, &shortest_length, &num_as_short);
+
+  double time_took = now() - start_time;
+
+  FILE *f = fopen("time.txt", "a");
+  fprintf(f, "%d Threads took %5.3f to compute %d cities with random_seed: %d.   shortest_length= %d\n\n", num_threads, time_took, num_cities, random_seed, shortest_length);
+  fclose(f);
 
   /* Report. */
   printf("\n");

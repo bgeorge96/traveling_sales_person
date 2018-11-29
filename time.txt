@@ -1,0 +1,136 @@
+1 Threads took 0.063 to compute 3 cities with random_seed: 56.   shortest_length= 79
+
+2 Threads took 0.050 to compute 3 cities with random_seed: 56.   shortest_length= 79
+
+4 Threads took 0.050 to compute 3 cities with random_seed: 56.   shortest_length= 79
+
+6 Threads took 0.050 to compute 3 cities with random_seed: 56.   shortest_length= 79
+
+1 Threads took 0.061 to compute 4 cities with random_seed: 56.   shortest_length= 157
+
+2 Threads took 0.050 to compute 4 cities with random_seed: 56.   shortest_length= 157
+
+4 Threads took 0.050 to compute 4 cities with random_seed: 56.   shortest_length= 157
+
+8 Threads took 0.049 to compute 4 cities with random_seed: 56.   shortest_length= 157
+
+16 Threads took 0.050 to compute 4 cities with random_seed: 56.   shortest_length= 157
+
+24 Threads took 0.052 to compute 4 cities with random_seed: 56.   shortest_length= 157
+
+1 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+2 Threads took 0.051 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+4 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+8 Threads took 0.065 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+16 Threads took 0.063 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+32 Threads took 0.051 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+32 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+64 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+120 Threads took 0.050 to compute 5 cities with random_seed: 56.   shortest_length= 197
+
+1 Threads took 0.053 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+2 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+4 Threads took 0.052 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+8 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+16 Threads took 0.052 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+32 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+32 Threads took 0.050 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+64 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+128 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+256 Threads took 0.051 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+512 Threads took 0.052 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+720 Threads took 0.053 to compute 6 cities with random_seed: 56.   shortest_length= 201
+
+4 Threads took 0.056 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+8 Threads took 0.053 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+16 Threads took 0.052 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+32 Threads took 0.052 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+32 Threads took 0.051 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+64 Threads took 0.055 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+128 Threads took 0.055 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+256 Threads took 0.052 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+512 Threads took 0.052 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+1024 Threads took 0.067 to compute 7 cities with random_seed: 56.   shortest_length= 207
+
+8 Threads took 0.071 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+16 Threads took 0.061 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+32 Threads took 0.056 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+32 Threads took 0.057 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+64 Threads took 0.053 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+128 Threads took 0.053 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+256 Threads took 0.052 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+512 Threads took 0.052 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+1024 Threads took 0.053 to compute 8 cities with random_seed: 56.   shortest_length= 210
+
+8 Threads took 0.259 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+16 Threads took 0.156 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+32 Threads took 0.109 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+32 Threads took 0.109 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+64 Threads took 0.081 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+128 Threads took 0.069 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+256 Threads took 0.062 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+512 Threads took 0.059 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+1024 Threads took 0.063 to compute 9 cities with random_seed: 56.   shortest_length= 240
+
+8 Threads took 2.336 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+16 Threads took 1.240 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+32 Threads took 0.700 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+32 Threads took 0.699 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+64 Threads took 0.386 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+128 Threads took 0.225 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+256 Threads took 0.156 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+512 Threads took 0.136 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
+1024 Threads took 0.137 to compute 10 cities with random_seed: 56.   shortest_length= 253
+
