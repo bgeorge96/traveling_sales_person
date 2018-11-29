@@ -71,22 +71,15 @@ print_perm(int *perm, int n, char *msge)
 }
 
 /* No-op action */
-void
+__device__ void
 nop(int *v, int n)
 {
   return;
 }
 
-int num_cities = 5;
-int shortest_length = INT_MAX;
-int num_as_short = -1;
-int num_trials = 0;
-int num_threads = 1;
-int random_seed = 42;
-
 /* Create an instance of a symmetric TSP. */
 int *
-create_tsp(int n)
+create_tsp(int n, int random_seed)
 {
   int *tsp = (int *) malloc(n * n * sizeof(int));
 
@@ -273,44 +266,28 @@ kth_perm(int k, int size)
 
   list_t *numbers = list_alloc(size);
   for (int i = 0;  i < size;  i++) {
-	list_add(numbers, i);
+    list_add(numbers, i);
   }
 
   list_t *perm = list_alloc(size);
 
-#if DEBUG
-  printf("k=%d, size=%d, remain=%ld\n", k, size, remain);
-  printf("  perm");
-  list_dump(perm);
-  printf("  nums");
-  list_dump(numbers);
-#endif
 
   for (int i = 1;  i < size;  i++) {
     long f = factorial(size - i);
     long j = remain / f;
     remain = remain % f;
-#if DEBUG
-	printf("i=%d, f=%ld j=%ld, remain=%ld\n", i, f, j, remain);
-#endif
 
-	list_add(perm, list_get(numbers, j));
-	list_remove_at(numbers, j);
+    list_add(perm, list_get(numbers, j));
+    list_remove_at(numbers, j);
 
-#if DEBUG
-	printf("  perm");
-	list_dump(perm);
-	printf("  nums");
-	list_dump(numbers);
-#endif
     if (remain == 0) {
-	     break;
-	  }
+      break;
+    }
   }
 
   /* Append remaining digits */
   for (int i = 0;  i < list_size(numbers);  i++) {
-	list_add(perm, list_get(numbers, i));
+    list_add(perm, list_get(numbers, i));
   }
 
   int *rtn = list_as_array(perm);
@@ -349,17 +326,26 @@ next_perm(int *perm, int size)
 }
 
 __global__
-void tsp_go(int* perm,int num_cities, int num_threads){
+void tsp_go(int* perm, int num_cities, int num_threads){
 
   // int perm[num_cities];
-  // perm = kth_perm((factorial(num_cities)/num_threads)*threadIdx.x, num_cities);
+  long cur_idx = threadIdx.x + 1;
+  long end_idx = (factorial(num_cities)/num_threads) * (cur_idx);
+  perm = kth_perm(cur_idx, num_cities);
 
-  // char buf[5] = "ha";
-  // sprintf(buf, "%d", threadIdx.x);
+  // __syncthreads();
+  char thing[5] = "yes";
+  print_perm(perm, num_cities, thing);
 
-  // print_perm(perm, 1, buf);
-  printf("%d, %d, %d\n",threadIdx.x, blockIdx.x, blockDim.x);
   __syncthreads();
+  // while( cur_idx <= end_idx){
+    printf("Hello from %d, end_idx: %ld, cur_idx: %ld\n",
+    threadIdx.x,
+    end_idx,
+    cur_idx);
+
+    // cur_idx++;
+  // }
 }
 
 void
@@ -375,20 +361,30 @@ usage(char *prog_name)
 int
 main(int argc, char **argv)
 {
+  int num_cities = 5;
+  int shortest_length = INT_MAX;
+  int num_as_short = -1;
+  int num_trials = 0;
+  int num_threads = 1;
+  int random_seed = 42;
+
   /* Use "random" random seed by default. */
   random_seed = time(NULL);
 
   int ch;
-  while ((ch = getopt(argc, argv, "c:hs:n::")) != -1) {
+  while ((ch = getopt(argc, argv, "c:hn:s:")) != -1) {
 	switch (ch) {
 	case 'c':
 	  num_cities = atoi(optarg);
 	  break;
+  case 'n':
+    num_threads = atoi(optarg);
+    if(num_threads < 1){
+      usage(argv[0]);
+    }
+    break;
 	case 's':
 	  random_seed = atoi(optarg);
-	  break;
-  case 'n':
-
 	  break;
 	case 'h':
 	default:
@@ -397,25 +393,24 @@ main(int argc, char **argv)
   }
 
   // cost array
-  int* h_cperm = create_tsp(num_cities);
+  int* h_cperm = create_tsp(num_cities, random_seed);
   int* d_cperm;
 
   // output Array
   int h_output[num_threads];
   int* d_output;
 
-  // malloc, make space
-  // int *d_perm;
-  // cudaMalloc((void **)&d_perm, sizeof(int)*num_cities);
+  // perm array
+  int *d_perm;
+
+  cudaMalloc((void **)&d_perm, sizeof(int)*num_cities);
   cudaMalloc((void **)&d_cperm, sizeof(int)*num_cities);
   cudaMalloc((void **)&d_output, sizeof(int)*num_threads);
-  // copy if nessary
   cudaMemcpy(d_cperm, h_cperm, num_cities * sizeof(int), cudaMemcpyHostToDevice);
 
-
-
   /* "Travel, salesman!" */
-  tsp_go<<<1,num_threads>>>(d_cperm,num_cities, num_threads);
+  tsp_go<<<1, num_threads>>>(d_perm,num_cities, num_threads);
+  cudaDeviceSynchronize();
 
   // collect results
   cudaMemcpy(h_output, d_output, num_threads * sizeof(int), cudaMemcpyDeviceToHost);
