@@ -311,13 +311,12 @@ void tsp_go(int* perm, int num_cities, int num_threads, int* cperm, int* output,
   long one_index = threadIdx.x + 1;
   long cur_idx = (factorial(num_cities)/num_threads) * (threadIdx.x)+1;
   long end_idx = (factorial(num_cities)/num_threads) * (one_index);
-  perm = kth_perm(cur_idx, num_cities);
   int min_path = INT_MAX;
   int num = 0;
 
-  // print_tsp(cperm, num_cities);
-
   __syncthreads();
+
+  perm = kth_perm(cur_idx, num_cities);
   while( cur_idx <= end_idx){
     // printf("Hello from %d, end_idx: %ld, cur_idx: %ld, perms: %ld\n", threadIdx.x, end_idx, cur_idx, factorial(num_cities));
     int tmp = eval_tsp(perm, num_cities, cperm);
@@ -387,9 +386,14 @@ main(int argc, char **argv)
 	}
   }
 
+  num_trials = factorial(num_cities);
+  if(num_trials < num_threads){
+    num_threads = num_trials;
+  }
+
   // cost array
   int* h_cperm = create_tsp(num_cities, random_seed);
-  print_tsp(h_cperm, num_cities);
+  // print_tsp(h_cperm, num_cities);
   int* d_cperm;
 
   // output Array
@@ -421,7 +425,6 @@ main(int argc, char **argv)
 
   /* Report. */
   printf("\n");
-  num_trials = factorial(num_cities);
   printf("Trials %ld\n", num_trials);
   float percent_as_short = (float)num_as_short / (float)num_trials * 100.0;
   printf("Shortest %d - %d tours - %.6f%%\n",

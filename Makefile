@@ -16,8 +16,11 @@ stest:
 	./parallel-tsp -n 2 -c 3
 
 mtest:
-	./tsp -c 5
-	./parallel-tsp -n 3 -c 5
+	./tsp -c 4
+	./parallel-tsp -n 1 -c 4
+
+homework:
+	# make tarball of parallel-tsp and mydoc.pdf
 
 # clean:
 # $(RM)
